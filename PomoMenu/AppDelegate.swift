@@ -31,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let button = self.statusItem.button
             else { return }
             
-            let output = self.pomo("--no-emoji")
+            let output = self.pomo("--no-emoji --format=time")
             let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
             
             if trimmed == "" {
