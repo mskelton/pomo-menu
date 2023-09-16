@@ -10,17 +10,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(
             withTitle: "Start focus session",
             action: #selector(AppDelegate.onFocus),
-            keyEquivalent: ""
+            keyEquivalent: "f"
         )
         menu.addItem(
             withTitle: "Start break",
             action: #selector(AppDelegate.onBreak),
-            keyEquivalent: ""
+            keyEquivalent: "b"
         )
         menu.addItem(
             withTitle: "Stop session",
             action: #selector(AppDelegate.onStop),
-            keyEquivalent: ""
+            keyEquivalent: "s"
         )
         menu.addItem(NSMenuItem.separator())
         menu.addItem(
@@ -62,7 +62,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func onStop() {
         writeStatus(status: Status(
-            type: .Break,
+            type: .Idle,
             start: Date(),
             end: Date(),
             lastNotified: nil
@@ -78,12 +78,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         else { return }
 
         let status = getStatus()
+
+        // Show/hide the status item if there is an active session
+        statusItem.isVisible = status.type != StatusType.Idle
+
+        // Bail early if there is no active session
         if status.type == StatusType.Idle {
             return
         }
 
+        // TODO: duration
         let duration = status.end.timeIntervalSinceNow
-        // TODO: Padding
         button.title = formatDuration(duration)
         button.image = NSImage(
             systemSymbolName: "timer",
@@ -93,9 +98,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // To prevent the menu item resizing as time ticks (no monospace font),
         // we set the length of the status item to an estimated length of the title.
         statusItem.length = measure(button.title)
-
-        // Show/hide the status item if there is an active session
-        statusItem.isVisible = status.type != StatusType.Idle
     }
 
     private func getStatus() -> Status {
@@ -162,6 +164,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func measure(_ title: String) -> CGFloat {
-        return CGFloat(title.count * 10)
+        return CGFloat(title.count * 12)
     }
 }
